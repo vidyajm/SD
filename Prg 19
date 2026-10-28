@@ -1,0 +1,55 @@
+import re
+import pandas as pd
+import matplotlib.pyplot as plt
+from collections import Counter
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+
+# Load the dataset
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\IMDB_Dataset.csv"
+TEXT_COL = "review"
+
+df = pd.read_csv(FILE)
+
+# Function to clean review text
+def clean(text):
+    text = str(text).lower()
+    text = re.sub(r"<.*?>", " ", text)  # Remove HTML tags
+    text = re.sub(r"[^a-z\s]", "", text)  # Keep only letters
+    return text
+
+# Clean the reviews
+df["clean"] = df[TEXT_COL].apply(clean)
+
+# Calculate word frequency without stop words
+words = []
+
+for review in df["clean"]:
+    for word in review.split():
+        if word not in ENGLISH_STOP_WORDS:
+            words.append(word)
+
+# Display the 15 most common words
+print("Top 15 most common words:")
+
+for word, count in Counter(words).most_common(15):
+    print(word, ":", count)
+
+# Calculate review length in words
+df["length"] = df["clean"].apply(lambda text: len(text.split()))
+
+# Display review length statistics
+print("\nReview length statistics:")
+print(df["length"].describe())
+
+# Plot the review length distribution
+plt.figure(figsize=(8, 5))
+plt.hist(
+    df["length"],
+    bins=40,
+    color="orange",
+    edgecolor="black"
+)
+plt.xlabel("Words per review")
+plt.ylabel("Number of reviews")
+plt.title("Review Length Distribution")
+plt.show()
