@@ -1,0 +1,37 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Load the dataset
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\diabetes.csv"
+df = pd.read_csv(FILE)
+
+# Remove the Id column if it exists
+if "Id" in df.columns:
+    df = df.drop(columns="Id")
+
+# Separate features and target
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Create and train the SVM model
+model = SVC(kernel="rbf")
+model.fit(X_train, y_train)
+
+# Make predictions
+pred = model.predict(X_test)
+
+# Evaluate the model
+print("Accuracy:", accuracy_score(y_test, pred))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, pred))
