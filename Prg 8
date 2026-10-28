@@ -1,0 +1,36 @@
+import pandas as pd
+from scipy import stats
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\diamonds.csv"
+
+# Column name; None selects the first numeric column
+COLUMN = None
+
+# Hypothesized population mean
+POP_MEAN = 70
+
+# Load the dataset
+df = pd.read_csv(FILE)
+
+# Select the first numeric column if COLUMN is None
+if COLUMN is None:
+    COLUMN = df.select_dtypes(include="number").columns[0]
+
+# Remove missing values
+sample = df[COLUMN].dropna()
+
+# Perform the one-sample t-test
+t, p = stats.ttest_1samp(sample, POP_MEAN)
+
+# Display the results
+print("Column:", COLUMN)
+print("Sample mean:", sample.mean())
+print("t-statistic:", t)
+print("p-value:", p)
+
+# Interpret the result
+if p < 0.05:
+    print("Result: Reject H0 - the mean differs significantly from", POP_MEAN)
+else:
+    print("Result: Fail to reject H0 - no significant difference from", POP_MEAN)
