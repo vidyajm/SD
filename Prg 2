@@ -1,0 +1,29 @@
+import pandas as pd
+from scipy import stats
+
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\diamonds.csv"
+
+# Read the CSV file
+df = pd.read_csv(FILE)
+
+# Select only numeric columns
+num = df.select_dtypes(include="number")
+
+# Calculate statistics for each numeric column
+for col in num.columns:
+    x = num[col].dropna()
+
+    print("\n===", col, "===")+
+
+    print("Mean:", x.mean())
+    print("Median:", x.median())
+    print("Mode:", x.mode().iloc[0])
+    print("Std deviation:", x.std())
+    print("Variance:", x.var())
+
+    print("2nd moment:", stats.moment(x, moment=2))
+    print("3rd moment:", stats.moment(x, moment=3))
+    print("4th moment:", stats.moment(x, moment=4))
+
+    print("Skewness:", stats.skew(x))
+    print("Kurtosis:", stats.kurtosis(x))
