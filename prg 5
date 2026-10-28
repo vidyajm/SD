@@ -1,0 +1,28 @@
+import pandas as pd
+
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\titanic.csv"
+COLUMN = "Fare"  # Numerical column to check
+
+# Read the CSV file
+df = pd.read_csv(FILE)
+
+# Remove missing values from the selected column
+x = df[COLUMN].dropna()
+
+# Calculate Q1, Q3, and IQR
+q1 = x.quantile(0.25)
+q3 = x.quantile(0.75)
+iqr = q3 - q1
+
+# Calculate lower and upper limits
+lower = q1 - 1.5 * iqr
+upper = q3 + 1.5 * iqr
+
+print("Q1 =", q1, " Q3 =", q3, " IQR =", iqr)
+print("Lower limit =", lower, " Upper limit =", upper)
+
+# Detect outliers
+outliers = df[(df[COLUMN] < lower) | (df[COLUMN] > upper)]
+
+print("\nNumber of outliers:", len(outliers))
+print(outliers)
