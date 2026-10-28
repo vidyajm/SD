@@ -1,0 +1,88 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\diabetes.csv"
+
+# Target column name; None selects the last column
+TARGET = None
+
+# Load the dataset and remove missing values
+df = pd.read_csv(FILE).dropna()
+
+# Select the target column
+if TARGET is None:
+    TARGET = df.columns[-1]
+
+# Separate features and target
+X = pd.get_dummies(df.drop(columns=TARGET))
+y = df[TARGET]
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Train the Decision Tree model
+tree = DecisionTreeClassifier(random_state=42)
+tree.fit(X_train, y_train)
+
+# Train the Random Forest model
+forest = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+forest.fit(X_train, y_train)
+
+# Store both models
+models = {
+    "Decision Tree": tree,
+    "Random Forest": forest
+}
+
+# Create plots for both confusion matrices
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
+
+# Evaluate both models
+for ax, (name, model) in zip(axes, models.items()):
+    pred = model.predict(X_test)
+
+    # Calculate accuracy and confusion matrix
+    accuracy = accuracy_score(y_test, pred)
+    cm = confusion_matrix(y_test, pred)
+
+    # Print results
+    print(f"{name} accuracy: {accuracy:.4f}")
+    print(f"{name} confusion matrix:")
+    print(cm)
+    print()
+
+    # Display confusion matrix
+    ConfusionMatrixDisplay(
+        confusion_matrix=cm,
+        display_labels=model.classes_
+    ).plot(
+        ax=ax,
+        cmap="Blues",
+        values_format="d",
+        colorbar=False
+    )
+
+    ax.set_title(f"{name}\nAccuracy: {accuracy:.3f}")
+
+# Adjust the layout
+plt.tight_layout()
+
+# Save the figure
+plt.savefig(
+    "confusion_matrices_tree_vs_forest.png",
+    dpi=150,
+    bbox_inches="tight"
+)
+
+# Display the plots
+plt.show()
