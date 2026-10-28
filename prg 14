@@ -1,0 +1,43 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\iris_dataset.csv"
+
+# Load the dataset
+df = pd.read_csv(FILE)
+
+# Remove the Id column if it exists
+if "Id" in df.columns:
+    df = df.drop(columns="Id")
+
+# Separate features and target
+X = df.iloc[:, :-1]  # Features
+y = df.iloc[:, -1]   # Target (species)
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Create and train the Decision Tree model
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and display accuracy
+pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, pred))
+
+# Create new samples for prediction
+new_samples = pd.DataFrame(
+    [
+        [5.1, 3.5, 1.4, 0.2],
+        [6.7, 3.0, 5.2, 2.3]
+    ],
+    columns=X.columns
+)
+
+# Predict the species of new samples
+print("Predictions for new samples:", model.predict(new_samples))
