@@ -1,0 +1,35 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\iris_dataset.csv"
+
+# Read the dataset
+df = pd.read_csv(FILE)
+
+# Select the first 4 numeric columns
+cols = df.select_dtypes(include="number").columns[:4]
+
+# Create histogram and box plot for each column
+for col in cols:
+    plt.figure(figsize=(10, 4))
+
+    # Histogram
+    plt.subplot(1, 2, 1)
+    plt.hist(
+        df[col].dropna(),
+        bins=10,
+        color="skyblue",
+        edgecolor="black"
+    )
+    plt.title("Histogram of " + col)
+    plt.xlabel(col)
+    plt.ylabel("Frequency")
+
+    # Box plot
+    plt.subplot(1, 2, 2)
+    plt.boxplot(df[col].dropna())
+    plt.title("Box Plot of " + col)
+    plt.ylabel(col)
+
+    plt.tight_layout()
+    plt.show()
