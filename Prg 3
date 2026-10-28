@@ -1,0 +1,21 @@
+import pandas as pd
+
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\titanic.csv"
+
+# Read the CSV file
+df = pd.read_csv(FILE)
+
+# Display missing values before filling
+print("Missing values before:")
+print(df.isnull().sum())
+
+# Select numeric columns
+num_cols = df.select_dtypes(include="number").columns
+
+# Fill missing numeric values with the column mean
+for col in num_cols:
+    df[col] = df[col].fillna(df[col].mean())
+
+# Display missing values after filling
+print("\nMissing values after (numeric columns filled with mean):")
+print(df.isnull().sum())
