@@ -1,0 +1,38 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\diabetes.csv"
+
+# Load the dataset
+df = pd.read_csv(FILE)
+
+# Separate features and target
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Create and train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict the test results
+pred = model.predict(X_test)
+
+# Evaluate the model
+print("Mean Squared Error:", mean_squared_error(y_test, pred))
+print("R2 score:", r2_score(y_test, pred))
+
+# Predict for new input data (first 3 rows of the test set)
+new_data = X_test.iloc[:3]
+
+print("\nNew input:")
+print(new_data)
+
+print("Predicted values:", model.predict(new_data))
