@@ -1,0 +1,36 @@
+import pandas as pd
+from scipy import stats
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\titanic.csv"
+
+# Column that divides the data into two groups
+GROUP_COL = "Sex"
+
+# Numerical column to compare
+VALUE_COL = "Age"
+
+# Load the dataset
+df = pd.read_csv(FILE)
+
+# Get the first two group names
+g1_name, g2_name = df[GROUP_COL].dropna().unique()[:2]
+
+# Select data for each group
+group1 = df[df[GROUP_COL] == g1_name][VALUE_COL].dropna()
+group2 = df[df[GROUP_COL] == g2_name][VALUE_COL].dropna()
+
+# Perform the independent two-sample t-test
+t, p = stats.ttest_ind(group1, group2)
+
+# Display the results
+print(g1_name, "mean:", group1.mean())
+print(g2_name, "mean:", group2.mean())
+print("t-statistic:", t)
+print("p-value:", p)
+
+# Interpret the result
+if p < 0.05:
+    print("Result: The two group means differ significantly.")
+else:
+    print("Result: No significant difference between the groups.")
