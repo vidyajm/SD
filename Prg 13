@@ -1,0 +1,50 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\diabetes.csv"
+
+# Load the dataset
+df = pd.read_csv(FILE)
+
+# Separate features and target
+X = df.iloc[:, :-1]  # Features
+y = df.iloc[:, -1]   # Target (0 or 1)
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Create and train the logistic regression model
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+
+# Predict the test results
+pred = model.predict(X_test)
+
+# Calculate and display accuracy
+print("Accuracy:", accuracy_score(y_test, pred))
+
+# Calculate and display the confusion matrix
+cm = confusion_matrix(y_test, pred)
+print("Confusion Matrix:")
+print(cm)
+
+# Display the confusion matrix as a graph
+disp = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
+    display_labels=["No Diabetes (0)", "Diabetes (1)"]
+)
+
+disp.plot(cmap="Blues", values_format="d")
+plt.title("Confusion Matrix - Logistic Regression (Diabetes)")
+
+# Save the confusion matrix image
+plt.savefig("confusion_matrix.png", dpi=150, bbox_inches="tight")
+
+# Display the graph
+plt.show()
