@@ -1,0 +1,40 @@
+import pandas as pd
+from scipy import stats
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\diamonds.csv"
+
+# Column names; None selects numeric columns automatically
+BEFORE = None
+AFTER = None
+
+# Load the dataset
+df = pd.read_csv(FILE)
+
+# Select numerical columns
+num = df.select_dtypes(include="number").columns
+
+# Select the first and second numeric columns
+if BEFORE is None:
+    BEFORE = num[0]
+
+if AFTER is None:
+    AFTER = num[1]
+
+# Remove rows with missing values
+data = df[[BEFORE, AFTER]].dropna()
+
+# Perform the paired t-test
+t, p = stats.ttest_rel(data[BEFORE], data[AFTER])
+
+# Display the results
+print("Before:", BEFORE, "mean =", data[BEFORE].mean())
+print("After :", AFTER, "mean =", data[AFTER].mean())
+print("t-statistic:", t)
+print("p-value:", p)
+
+# Interpret the result
+if p < 0.05:
+    print("Result: The training has a significant effect.")
+else:
+    print("Result: No significant effect of the training.")
