@@ -1,0 +1,79 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+
+# File path
+FILE = r"C:\Users\HP\Desktop\MCA 4th sem\MCA-Lab-Programs\Datasets\titanic.csv"
+
+# Load the dataset
+df = pd.read_csv(FILE)
+
+# Select required columns
+df = df[
+    ["Survived", "Pclass", "Sex", "Age", "Fare", "SibSp", "Parch"]
+].copy()
+
+# Fill missing Age values with the mean
+df["Age"] = df["Age"].fillna(df["Age"].mean())
+
+# Convert Sex into numerical values
+df["Sex"] = df["Sex"].map({
+    "male": 0,
+    "female": 1
+})
+
+# Remove remaining missing values
+df = df.dropna()
+
+# Separate features and target
+X = df.drop(columns="Survived")
+y = df["Survived"]
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create and train the KNN model
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+
+# Predict the test results
+pred = knn.predict(X_test)
+
+# Calculate accuracy and confusion matrix
+acc = accuracy_score(y_test, pred)
+cm = confusion_matrix(y_test, pred)
+
+# Display results
+print("KNN accuracy:", acc)
+print("Confusion Matrix:")
+print(cm)
+
+# Display the confusion matrix
+disp = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
+    display_labels=["Died (0)", "Survived (1)"]
+)
+
+disp.plot(cmap="Blues", values_format="d")
+
+plt.title(f"KNN Confusion Matrix - Titanic (Accuracy: {acc:.3f})")
+
+# Save the confusion matrix image
+plt.savefig(
+    "confusion_matrix_knn.png",
+    dpi=150,
+    bbox_inches="tight"
+)
+
+# Display the graph
+plt.show()
